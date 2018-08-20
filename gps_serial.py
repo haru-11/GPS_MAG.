@@ -2,13 +2,16 @@
 
 import serial
 import time
+import threading
 
 time.sleep(1.0)
 s = serial.Serial('/dev/serial0', 115200, timeout=10)
 
 s.readline()
-try:
+
+def get_gps():
 	while True:
+
 		sentence = s.readline().decode('utf-8')
 		print(sentence)
 
@@ -36,6 +39,19 @@ try:
 		else :
 			dir = sentence[50]+sentence[51]+sentence[52]+sentence[53]+sentence[54]+sentence[55]
 		print(dir)
+
+
+
+gpsthread = threading.Thread(target=get_gps, args=()) # 上の関数を実行するスレッドを生成
+gpsthread.daemon = True
+gpsthread.start() # スレッドを起動
+
+try:
+
+	while True:
+		print("OKOKOKOKOKOKOK!!!!!!!")
+		time.sleep(1.0)
+
 except KeyboardInterrupt:
 	s.close()
 	pass
